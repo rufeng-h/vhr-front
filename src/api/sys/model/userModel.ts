@@ -2,13 +2,23 @@
  * @description: Login interface parameters
  */
 export interface LoginParams {
-  username: string;
-  password: string;
+  email?: string;
+  code?: string;
+  phone?: string;
+  password?: string;
+  userType: string;
+  loginType: LoginType;
 }
 
 export interface RoleInfo {
   roleName: string;
   value: string;
+}
+
+export enum LoginType {
+  EmailPwd = 1,
+  EmailCode = 2,
+  Phone = 3,
 }
 
 /**
@@ -29,10 +39,22 @@ export interface GetUserInfoModel {
   userId: string | number;
   // 用户名
   username: string;
-  // 真实名字
-  realName: string;
   // 头像
   avatar: string;
   // 介绍
   desc?: string;
+}
+
+export interface SendEmailCodeForm {
+  email: string;
+  userType: string;
+}
+
+export interface RegisterForm {
+  username: string;
+  password: string;
+  email: string;
+  phone: string;
+  idCard: string;
+  emailCode: string;
 }

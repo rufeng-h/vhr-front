@@ -1,11 +1,23 @@
 import { defHttp } from '/@/utils/http/axios';
-import { LoginParams, LoginResultModel, GetUserInfoModel } from './model/userModel';
+import {
+  LoginParams,
+  LoginResultModel,
+  GetUserInfoModel,
+  LoginType,
+  SendEmailCodeForm,
+} from './model/userModel';
 
 import { ErrorMessageMode } from '/#/axios';
 
 enum Api {
-  Login = '/login',
+  LoginByEmailPwd = '/login/email',
+  LoginByEmailCode = '/login/emailCode',
+  LoginByPhone = '/login/phone',
   Logout = '/logout',
+  ValidateEmail = '/validate',
+  SendEmailCode = '/emailCode',
+  Register = '/register',
+
   GetUserInfo = '/getUserInfo',
   GetPermCode = '/getPermCode',
   TestRetry = '/testRetry',
@@ -15,9 +27,21 @@ enum Api {
  * @description: user login api
  */
 export function loginApi(params: LoginParams, mode: ErrorMessageMode = 'modal') {
+  let url = '';
+  switch (params.loginType) {
+    case LoginType.EmailPwd:
+      url = Api.LoginByEmailPwd;
+      break;
+    case LoginType.EmailCode:
+      url = Api.LoginByEmailCode;
+      break;
+    case LoginType.Phone:
+      url = Api.LoginByPhone;
+      break;
+  }
   return defHttp.post<LoginResultModel>(
     {
-      url: Api.Login,
+      url,
       params,
     },
     {
@@ -52,4 +76,19 @@ export function testRetry() {
       },
     },
   );
+}
+
+export function sendEmailCode(data: SendEmailCodeForm) {
+  return defHttp.post({
+    url: Api.SendEmailCode,
+    data,
+  });
+}
+
+export function validateEmail(email: string) {
+  return defHttp.get({ url: Api.ValidateEmail + `/${email}` });
+}
+
+export function register(data: RegisterForm) {
+  return defHttp.post({ url: Api.Register, data });
 }

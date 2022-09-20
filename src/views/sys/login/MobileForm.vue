@@ -12,6 +12,7 @@
       </FormItem>
       <FormItem name="sms" class="enter-x">
         <CountdownInput
+          :sendCodeApi="doSendCode"
           size="large"
           class="fix-auto-fill"
           v-model:value="formData.sms"
@@ -37,6 +38,9 @@
   import LoginFormTitle from './LoginFormTitle.vue';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useLoginState, useFormRules, useFormValid, LoginStateEnum } from './useLogin';
+  import { sendEmailCode } from '/@/api/sys/user';
+  import { useUserStore } from '/@/store/modules/user';
+  import { LoginType } from '/@/api/sys/model/userModel';
 
   const FormItem = Form.Item;
   const { t } = useI18n();
@@ -58,6 +62,18 @@
   async function handleLogin() {
     const data = await validForm();
     if (!data) return;
-    console.log(data);
+    await useUserStore().login({
+      userType: 'CANDIDATE',
+      email: formData.mobile,
+      code: formData.sms,
+      loginType: LoginType.EmailCode,
+    });
+  }
+
+  async function doSendCode() {
+    await sendEmailCode({
+      userType: 'CANDIDATE',
+      email: formData.mobile,
+    });
   }
 </script>

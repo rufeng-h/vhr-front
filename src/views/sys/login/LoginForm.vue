@@ -11,8 +11,9 @@
     <FormItem name="account" class="enter-x">
       <Input
         size="large"
+        type="email"
         v-model:value="formData.account"
-        :placeholder="t('sys.login.userName')"
+        placeholder="账号为邮箱"
         class="fix-auto-fill"
       />
     </FormItem>
@@ -100,6 +101,7 @@
   import { useUserStore } from '/@/store/modules/user';
   import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { LoginType } from '/@/api/sys/model/userModel';
   //import { onKeyStroke } from '@vueuse/core';
 
   const ACol = Col;
@@ -119,7 +121,7 @@
   const rememberMe = ref(false);
 
   const formData = reactive({
-    account: 'vben',
+    account: '2517285841@qq.com',
     password: '123456',
   });
 
@@ -136,13 +138,15 @@
       loading.value = true;
       const userInfo = await userStore.login({
         password: data.password,
-        username: data.account,
+        email: data.account,
+        userType: 'CANDIDATE',
+        loginType: LoginType.EmailPwd,
         mode: 'none', //不要默认的错误提示
       });
       if (userInfo) {
         notification.success({
           message: t('sys.login.loginSuccessTitle'),
-          description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.realName}`,
+          description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.username}`,
           duration: 3,
         });
       }

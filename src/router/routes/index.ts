@@ -62,6 +62,28 @@ export const indexRoutes: AppRouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/company',
+    name: 'Company',
+    redirect: '/company/index',
+    meta: {
+      title: '公司简介',
+      hideChildrenInMenu: true,
+      ignoreAuth: true,
+    },
+    component: LAYOUT,
+    children: [
+      {
+        path: 'index',
+        name: 'CompanyIndex',
+        meta: {
+          title: '公司简介',
+          ignoreAuth: true,
+        },
+        component: () => import('/@/views/vhr/index/Company.vue'),
+      },
+    ],
+  },
 ];
 
 // Basic routing without permission
