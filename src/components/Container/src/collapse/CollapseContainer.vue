@@ -60,7 +60,7 @@
     lazyTime: { type: Number, default: 0 },
   });
 
-  const show = ref(true);
+  const show = ref(false);
 
   const { prefixCls } = useDesign('collapse-container');
 
@@ -89,7 +89,7 @@
 
     &__header {
       display: flex;
-      height: 32px;
+      // height: 32px;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid @border-color-light;

@@ -37,7 +37,7 @@
 
       <ErrorAction v-if="getUseErrorHandle" :class="`${prefixCls}-action__item error-action`" />
 
-      <Notify v-if="getShowNotice" :class="`${prefixCls}-action__item notify-item`" />
+      <Notify v-if="getShowNotice && isLogin" :class="`${prefixCls}-action__item notify-item`" />
 
       <FullScreen v-if="getShowFullScreen" :class="`${prefixCls}-action__item fullscreen-item`" />
 
@@ -173,8 +173,8 @@
         return unref(getSplit) ? MenuModeEnum.HORIZONTAL : null;
       });
 
-      console.log(useUserStore().getToken);
-      console.log(useUserStore().isLogin);
+      // console.log(useUserStore().getToken);
+      // console.log(useUserStore().isLogin);
 
       return {
         prefixCls,

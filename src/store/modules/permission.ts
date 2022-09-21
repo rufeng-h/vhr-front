@@ -77,6 +77,9 @@ export const usePermissionStore = defineStore({
     },
   },
   actions: {
+    addFrontMenu(menu: Menu) {
+      this.frontMenuList.push(menu);
+    },
     setPermCodeList(codeList: string[]) {
       this.permCodeList = codeList;
     },
@@ -198,7 +201,10 @@ export const usePermissionStore = defineStore({
           });
 
           // 设置菜单列表
-          this.setFrontMenuList(menuList);
+          // this.setFrontMenuList(menuList);
+          menuList.forEach((menu) => {
+            this.addFrontMenu(menu);
+          });
 
           // Convert multi-level routing to level 2 routing
           // 将多级路由转换为 2 级路由

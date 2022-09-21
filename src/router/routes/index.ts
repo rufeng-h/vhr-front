@@ -54,6 +54,7 @@ export const indexRoutes: AppRouteRecordRaw[] = [
     name: 'Index',
     redirect: '/index/home',
     meta: {
+      icon: 'bi:door-open',
       title: '首页',
       hideChildrenInMenu: true,
       ignoreAuth: true,
@@ -79,6 +80,7 @@ export const indexRoutes: AppRouteRecordRaw[] = [
       title: '公司简介',
       hideChildrenInMenu: true,
       ignoreAuth: true,
+      icon: 'carbon:location-company',
     },
     component: LAYOUT,
     children: [
@@ -90,6 +92,75 @@ export const indexRoutes: AppRouteRecordRaw[] = [
           ignoreAuth: true,
         },
         component: () => import('/@/views/vhr/index/Company.vue'),
+      },
+    ],
+  },
+  {
+    path: '/job',
+    name: 'Job',
+    component: LAYOUT,
+    redirect: '/job/index',
+    meta: {
+      hideChildrenInMenu: true,
+      title: '招聘信息',
+      ignoreAuth: true,
+      icon: 'eos-icons:cronjob',
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('/@/views/vhr/index/Job.vue'),
+        name: 'JobIndex',
+        meta: {
+          title: '招聘信息',
+          ignoreAuth: true,
+        },
+      },
+    ],
+  },
+  {
+    path: '/recr',
+    name: 'recruiment',
+    component: LAYOUT,
+    redirect: '/recr/index',
+    meta: {
+      hideChildrenInMenu: true,
+      title: '招聘动态',
+      ignoreAuth: true,
+      icon: 'carbon:result',
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('/@/views/vhr/index/Recr.vue'),
+        name: 'RecrIndex',
+        meta: {
+          title: '招聘动态',
+          ignoreAuth: true,
+        },
+      },
+    ],
+  },
+  {
+    path: '/question',
+    name: 'Question',
+    component: LAYOUT,
+    redirect: '/question/index',
+    meta: {
+      icon: 'akar-icons:chat-question',
+      hideChildrenInMenu: true,
+      title: '常见问题',
+      ignoreAuth: true,
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('/@/views/vhr/index/Question.vue'),
+        name: 'QuestionIndex',
+        meta: {
+          title: '常见问题',
+          ignoreAuth: true,
+        },
       },
     ],
   },

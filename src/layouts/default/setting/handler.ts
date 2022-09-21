@@ -20,6 +20,8 @@ export function baseHandler(event: HandlerEnum, value: any) {
 }
 
 export function handler(event: HandlerEnum, value: any): DeepPartial<ProjectConfig> {
+  console.log(value);
+
   const appStore = useAppStore();
 
   const { getThemeColor, getDarkMode } = useRootSetting();
