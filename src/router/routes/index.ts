@@ -39,6 +39,15 @@ export const LoginRoute: AppRouteRecordRaw = {
   },
 };
 
+export const AdminLoginRoute: AppRouteRecordRaw = {
+  path: '/admin',
+  name: 'AdminLogin',
+  component: () => import('/@/views/sys/login/AdminLogin.vue'),
+  meta: {
+    title: t('routes.basic.login'),
+  },
+};
+
 export const indexRoutes: AppRouteRecordRaw[] = [
   {
     path: '/index',
@@ -89,6 +98,7 @@ export const indexRoutes: AppRouteRecordRaw[] = [
 // Basic routing without permission
 // 未经许可的基本路由
 export const basicRoutes = [
+  AdminLoginRoute,
   LoginRoute,
   RootRoute,
   ...mainOutRoutes,

@@ -5,6 +5,7 @@ import {
   GetUserInfoModel,
   LoginType,
   SendEmailCodeForm,
+  RegisterForm,
 } from './model/userModel';
 
 import { ErrorMessageMode } from '/#/axios';

@@ -37,7 +37,13 @@
   import { CountdownInput } from '/@/components/CountDown';
   import LoginFormTitle from './LoginFormTitle.vue';
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useLoginState, useFormRules, useFormValid, LoginStateEnum } from './useLogin';
+  import {
+    useLoginState,
+    useFormRules,
+    useFormValid,
+    LoginStateEnum,
+    currentUserType,
+  } from './useLogin';
   import { sendEmailCode } from '/@/api/sys/user';
   import { useUserStore } from '/@/store/modules/user';
   import { LoginType } from '/@/api/sys/model/userModel';
@@ -54,6 +60,7 @@
     mobile: '',
     sms: '',
   });
+  const userType = currentUserType();
 
   const { validForm } = useFormValid(formRef);
 
@@ -63,7 +70,7 @@
     const data = await validForm();
     if (!data) return;
     await useUserStore().login({
-      userType: 'CANDIDATE',
+      userType,
       email: formData.mobile,
       code: formData.sms,
       loginType: LoginType.EmailCode,
@@ -72,8 +79,9 @@
 
   async function doSendCode() {
     await sendEmailCode({
-      userType: 'CANDIDATE',
+      userType,
       email: formData.mobile,
     });
+    return Promise.resolve(true);
   }
 </script>

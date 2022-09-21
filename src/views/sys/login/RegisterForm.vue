@@ -104,7 +104,7 @@
   const loading = ref(false);
 
   const { createMessage } = useMessage();
-  const { redo } = useRedo();
+  const redo = useRedo();
 
   const formData = reactive({
     username: '',

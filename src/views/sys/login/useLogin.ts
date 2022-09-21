@@ -1,6 +1,7 @@
 import type { ValidationRule } from 'ant-design-vue/lib/form/Form';
 import type { RuleObject } from 'ant-design-vue/lib/form/interface';
 import { ref, computed, unref, Ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useI18n } from '/@/hooks/web/useI18n';
 
 export enum LoginStateEnum {
@@ -115,4 +116,9 @@ function createRule(message: string) {
       trigger: 'change',
     },
   ];
+}
+
+export function currentUserType(): string {
+  const router = useRouter();
+  return router.currentRoute.value.name === 'AdminLogin' ? 'ADMIN' : 'CANDIDATE';
 }

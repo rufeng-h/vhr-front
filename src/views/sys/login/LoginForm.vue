@@ -99,7 +99,13 @@
   import { useMessage } from '/@/hooks/web/useMessage';
 
   import { useUserStore } from '/@/store/modules/user';
-  import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin';
+  import {
+    LoginStateEnum,
+    useLoginState,
+    useFormRules,
+    useFormValid,
+    currentUserType,
+  } from './useLogin';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { LoginType } from '/@/api/sys/model/userModel';
   //import { onKeyStroke } from '@vueuse/core';
@@ -119,6 +125,7 @@
   const formRef = ref();
   const loading = ref(false);
   const rememberMe = ref(false);
+  const userType = currentUserType();
 
   const formData = reactive({
     account: '2517285841@qq.com',
@@ -139,7 +146,7 @@
       const userInfo = await userStore.login({
         password: data.password,
         email: data.account,
-        userType: 'CANDIDATE',
+        userType,
         loginType: LoginType.EmailPwd,
         mode: 'none', //不要默认的错误提示
       });
