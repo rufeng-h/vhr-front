@@ -67,17 +67,17 @@
         resetInterval();
       }
 
-      resetInterval();
+      // resetInterval();
 
-      const appStore = useAppStore();
-      const config = handler(HandlerEnum.CHANGE_LAYOUT, {
-        mode: 'inline',
-        split: false,
-        type: 'sidebar',
-      });
-      console.log(config);
+      // const appStore = useAppStore();
+      // const config = handler(HandlerEnum.CHANGE_LAYOUT, {
+      //   mode: 'inline',
+      //   split: false,
+      //   type: 'sidebar',
+      // });
+      // console.log(config);
 
-      setTimeout(() => appStore.setProjectConfig(config), 3000);
+      // setTimeout(() => appStore.setProjectConfig(config), 3000);
 
       return { imgList, handleClick, handlePreview, ...toRefs(state), next, prev };
     },

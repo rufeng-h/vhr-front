@@ -6,10 +6,10 @@
           <template #title>
             <div class="h-15 flex flex-row items-center">
               <Icon icon="akar-icons:chat-question" :size="40" />
-              <span class="text-xl ml-2">{{ item.title }}</span>
+              <span class="text-xl ml-2 font-仿宋">{{ item.title }}</span>
             </div>
           </template>
-          <template #default><div v-html="item.answer"></div></template>
+          <div class="content" v-html="item.answer"></div>
         </CollapseContainer>
       </template>
     </PageWrapper>
@@ -108,4 +108,8 @@
   });
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+  .content {
+    font-family: 仿宋;
+  }
+</style>

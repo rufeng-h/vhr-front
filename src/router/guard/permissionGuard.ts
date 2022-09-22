@@ -7,7 +7,14 @@ import { useUserStoreWithOut } from '/@/store/modules/user';
 
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 
-import { RootRoute } from '/@/router/routes';
+import { indexRoutes, RootRoute } from '/@/router/routes';
+import { useAppStore } from '/@/store/modules/app';
+import { HandlerEnum } from '/@/layouts/default/setting/enum';
+import { handler } from '/@/layouts/default/setting/handler';
+import { transformRouteToMenu } from '../helper/menuHelper';
+import adminRoutes from '../routes/admin';
+import candRoutes from '../routes/candidate';
+import { RoleEnum } from '/@/enums/roleEnum';
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
@@ -18,6 +25,10 @@ const whitePathList: PageEnum[] = [LOGIN_PATH, PageEnum.ADMIN_LOGIN];
 export function createPermissionGuard(router: Router) {
   const userStore = useUserStoreWithOut();
   const permissionStore = usePermissionStoreWithOut();
+  const appStore = useAppStore();
+  const frontMenuList = transformRouteToMenu(indexRoutes);
+  const adminMenuList = transformRouteToMenu(adminRoutes);
+  const candidateMenuList = transformRouteToMenu(candRoutes);
   router.beforeEach(async (to, from, next) => {
     if (
       from.path === ROOT_PATH &&
@@ -113,6 +124,33 @@ export function createPermissionGuard(router: Router) {
       const redirect = decodeURIComponent(redirectPath);
       const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect };
       next(nextData);
+    }
+  });
+
+  router.afterEach(async (to, from) => {
+    // 从前台到后台
+    if (!!from.meta.ignoreAuth && !to.meta.ignoreAuth) {
+      const config = handler(HandlerEnum.CHANGE_LAYOUT, {
+        mode: 'inline',
+        split: false,
+        type: 'sidebar',
+      });
+
+      permissionStore.setFrontMenuList(
+        userStore.getRoleList.includes(RoleEnum.ADMIN) ? adminMenuList : candidateMenuList,
+      );
+      appStore.setProjectConfig(config);
+    }
+
+    // 从后台到前台
+    if (!!to.meta.ignoreAuth && !from.meta.ignoreAuth) {
+      const config = handler(HandlerEnum.CHANGE_LAYOUT, {
+        mode: 'horizontal',
+        split: undefined,
+        type: 'top-menu',
+      });
+      permissionStore.setFrontMenuList(frontMenuList);
+      appStore.setProjectConfig(config);
     }
   });
 }

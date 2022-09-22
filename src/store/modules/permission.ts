@@ -23,6 +23,9 @@ import { getPermCode } from '/@/api/sys/user';
 
 import { useMessage } from '/@/hooks/web/useMessage';
 import { PageEnum } from '/@/enums/pageEnum';
+import adminRoutes from '/@/router/routes/admin';
+import { RoleEnum } from '/@/enums/roleEnum';
+import candRoutes from '/@/router/routes/candidate';
 
 interface PermissionState {
   // Permission code list
@@ -185,8 +188,11 @@ export const usePermissionStore = defineStore({
 
         // 路由映射， 默认进入该case
         case PermissionModeEnum.ROUTE_MAPPING:
+          routes = userStore.getRoleList.includes(RoleEnum.ADMIN)
+            ? [asyncRoutes[0], ...adminRoutes]
+            : [asyncRoutes[0], ...candRoutes];
           // 对非一级路由进行过滤
-          routes = filter(asyncRoutes, routeFilter);
+          routes = filter(routes, routeFilter);
           // 对一级路由再次根据角色权限过滤
           routes = routes.filter(routeFilter);
           // 将路由转换成菜单
@@ -201,10 +207,10 @@ export const usePermissionStore = defineStore({
           });
 
           // 设置菜单列表
-          // this.setFrontMenuList(menuList);
-          menuList.forEach((menu) => {
-            this.addFrontMenu(menu);
-          });
+          this.setFrontMenuList(menuList);
+          // menuList.forEach((menu) => {
+          //   this.addFrontMenu(menu);
+          // });
 
           // Convert multi-level routing to level 2 routing
           // 将多级路由转换为 2 级路由

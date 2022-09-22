@@ -40,7 +40,7 @@ export const LoginRoute: AppRouteRecordRaw = {
 };
 
 export const AdminLoginRoute: AppRouteRecordRaw = {
-  path: '/admin',
+  path: '/adminLogin',
   name: 'AdminLogin',
   component: () => import('/@/views/sys/login/AdminLogin.vue'),
   meta: {
