@@ -6,6 +6,7 @@ import {
   LoginType,
   SendEmailCodeForm,
   RegisterForm,
+  CandPwdModifyForm,
 } from './model/userModel';
 
 import { ErrorMessageMode } from '/#/axios';
@@ -18,6 +19,9 @@ enum Api {
   ValidateEmail = '/validate',
   SendEmailCode = '/emailCode',
   Register = '/register',
+
+  ModifyPwd = '/api/cand/pwd',
+  UpdateCand = '/api/cand',
 
   GetUserInfo = '/getUserInfo',
   GetPermCode = '/getPermCode',
@@ -93,3 +97,13 @@ export function validateEmail(email: string) {
 export function register(data: RegisterForm) {
   return defHttp.post({ url: Api.Register, data });
 }
+
+export function updateCandidate(data) {
+  return defHttp.put({ url: Api.UpdateCand, data });
+}
+
+export function updatePwd(data: CandPwdModifyForm) {
+  return defHttp.put({ url: Api.ModifyPwd, data });
+}
+
+export function uploadAvatar() {}

@@ -5,7 +5,7 @@
         <CollapseContainer v-for="item in items" :key="item.title">
           <template #title>
             <div class="h-15 flex flex-row items-center">
-              <Icon icon="akar-icons:chat-question" :size="40" />
+              <Icon icon="akar-icons:chat-question" :size="40" color="skyblue" />
               <span class="text-xl ml-2 font-仿宋">{{ item.title }}</span>
             </div>
           </template>

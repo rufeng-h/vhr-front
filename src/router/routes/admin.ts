@@ -3,16 +3,16 @@ import { AppRouteModule } from '../types';
 
 const adminRoutes: AppRouteModule[] = [
   {
-    path: '/admin',
-    redirect: '/admin/home',
-    name: 'Admin',
+    path: '/home',
+    redirect: '/home/admin',
+    name: 'Home',
     component: LAYOUT,
     meta: {
       title: '管理员',
     },
     children: [
       {
-        path: 'home',
+        path: 'admin',
         name: 'AdminHome',
         component: () => import('/@/views/dashboard/analysis/index.vue'),
         meta: {

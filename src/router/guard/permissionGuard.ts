@@ -15,6 +15,7 @@ import { transformRouteToMenu } from '../helper/menuHelper';
 import adminRoutes from '../routes/admin';
 import candRoutes from '../routes/candidate';
 import { RoleEnum } from '/@/enums/roleEnum';
+import { PAGE_NOT_FOUND_NAME } from '../constant';
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
@@ -130,6 +131,9 @@ export function createPermissionGuard(router: Router) {
   router.afterEach(async (to, from) => {
     // 从前台到后台
     if (!!from.meta.ignoreAuth && !to.meta.ignoreAuth) {
+      if (to.name === PAGE_NOT_FOUND_NAME) {
+        return;
+      }
       const config = handler(HandlerEnum.CHANGE_LAYOUT, {
         mode: 'inline',
         split: false,
@@ -144,6 +148,9 @@ export function createPermissionGuard(router: Router) {
 
     // 从后台到前台
     if (!!to.meta.ignoreAuth && !from.meta.ignoreAuth) {
+      if (to.name === PAGE_NOT_FOUND_NAME) {
+        return;
+      }
       const config = handler(HandlerEnum.CHANGE_LAYOUT, {
         mode: 'horizontal',
         split: undefined,

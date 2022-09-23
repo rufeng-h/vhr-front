@@ -125,7 +125,9 @@ export const useUserStore = defineStore({
         // goHome && (await router.replace(userInfo?.homePath || PageEnum.BASE_HOME));
         goHome &&
           (await router.replace(
-            this.getRoleList.includes(RoleEnum.ADMIN) ? '/admin/home' : '/cand/home',
+            this.getRoleList.includes(RoleEnum.ADMIN)
+              ? { name: 'AdminHome' }
+              : { name: 'CandHome' },
           ));
       }
       return userInfo;

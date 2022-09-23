@@ -3,20 +3,40 @@ import { AppRouteRecordRaw } from '../types';
 
 const candRoutes: AppRouteRecordRaw[] = [
   {
-    path: '/cand',
-    redirect: '/cand/home',
-    name: 'Cand',
+    path: '/home',
+    redirect: '/home/cand',
+    name: 'Home',
     component: LAYOUT,
     meta: {
       title: '管理员',
     },
     children: [
       {
-        path: 'home',
+        path: 'cand',
         name: 'CandHome',
         component: () => import('/@/views/dashboard/analysis/index.vue'),
         meta: {
           title: '控制台',
+        },
+      },
+    ],
+  },
+  {
+    path: '/profile',
+    redirect: '/profile/cand',
+    name: 'Profile',
+    component: LAYOUT,
+    meta: {
+      title: '个人中心',
+      hideChildrenInMenu: true,
+    },
+    children: [
+      {
+        path: 'cand',
+        name: 'CandProfile',
+        component: () => import('/@/views/vhr/cand/profile/index.vue'),
+        meta: {
+          title: '个人中心',
         },
       },
     ],

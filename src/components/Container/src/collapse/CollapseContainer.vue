@@ -58,9 +58,14 @@
      * Delayed loading time
      */
     lazyTime: { type: Number, default: 0 },
+
+    defaultShow: {
+      type: Boolean,
+      default: false,
+    },
   });
 
-  const show = ref(false);
+  const show = ref(props.defaultShow);
 
   const { prefixCls } = useDesign('collapse-container');
 

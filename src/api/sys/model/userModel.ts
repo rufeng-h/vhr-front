@@ -1,3 +1,5 @@
+import { UserInfo } from '/#/store';
+
 /**
  * @description: Login interface parameters
  */
@@ -13,6 +15,13 @@ export interface LoginParams {
 export interface RoleInfo {
   roleName: string;
   value: string;
+}
+
+export interface CandidateInfo extends UserInfo {
+  hometown?: string;
+  gender: string;
+  idCard: string;
+  living: string;
 }
 
 export enum LoginType {
@@ -57,4 +66,10 @@ export interface RegisterForm {
   phone: string;
   idCard: string;
   emailCode: string;
+}
+
+// cand修改密码
+export interface CandPwdModifyForm {
+  oldPwd: string;
+  newPwd: string;
 }
