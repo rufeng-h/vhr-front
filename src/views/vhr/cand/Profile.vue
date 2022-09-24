@@ -1,27 +1,31 @@
 <template>
-  <PageWrapper content-background>
-    <div class="mx-6">
-      <a-descriptions bordered title="个人基本信息">
-        <template #extra>
-          <a-button class="mr-2" type="primary" @click="tryEditUser">修改个人信息</a-button>
-          <a-button type="primary" @click="tryModifyPwd">修改密码</a-button>
-        </template>
-        <a-descriptions-item label="姓名">{{ userInfo.username }}</a-descriptions-item>
-        <a-descriptions-item label="籍贯">{{ userInfo.hometown }}</a-descriptions-item>
-        <a-descriptions-item label="现居地">{{ userInfo.living }}</a-descriptions-item>
-        <a-descriptions-item label="性别"><Icon icon="twemoji:female-sign" /></a-descriptions-item>
-        <a-descriptions-item label="邮箱">{{ userInfo.email }}</a-descriptions-item>
-        <a-descriptions-item label="手机">{{ userInfo.phone }}</a-descriptions-item>
-        <a-descriptions-item label="身份证号"
-          ><a-tag color="orange">{{ userInfo.idCard }}</a-tag></a-descriptions-item
-        >
-        <a-descriptions-item label="创建时间">{{ userInfo.created }}</a-descriptions-item>
-        <a-descriptions-item label="上次登录">{{ userInfo.lastLogin }}</a-descriptions-item>
-      </a-descriptions>
-    </div>
-  </PageWrapper>
-  <EditModal @register="userModal" @submit="handleSubmit" />
-  <ChangePwdModal @register="pwdModal" @submit="handleModifyPwd" />
+  <div>
+    <PageWrapper content-background>
+      <div class="mx-6">
+        <a-descriptions bordered title="个人基本信息">
+          <template #extra>
+            <a-button class="mr-2" type="primary" @click="tryEditUser">修改个人信息</a-button>
+            <a-button type="primary" @click="tryModifyPwd">修改密码</a-button>
+          </template>
+          <a-descriptions-item label="姓名">{{ userInfo.username }}</a-descriptions-item>
+          <a-descriptions-item label="籍贯">{{ userInfo.hometown }}</a-descriptions-item>
+          <a-descriptions-item label="现居地">{{ userInfo.living }}</a-descriptions-item>
+          <a-descriptions-item label="性别"
+            ><Icon icon="twemoji:female-sign"
+          /></a-descriptions-item>
+          <a-descriptions-item label="邮箱">{{ userInfo.email }}</a-descriptions-item>
+          <a-descriptions-item label="手机">{{ userInfo.phone }}</a-descriptions-item>
+          <a-descriptions-item label="身份证号"
+            ><a-tag color="orange">{{ userInfo.idCard }}</a-tag></a-descriptions-item
+          >
+          <a-descriptions-item label="创建时间">{{ userInfo.created }}</a-descriptions-item>
+          <a-descriptions-item label="上次登录">{{ userInfo.lastLogin }}</a-descriptions-item>
+        </a-descriptions>
+      </div>
+    </PageWrapper>
+    <EditModal @register="userModal" @submit="handleSubmit" />
+    <ChangePwdModal @register="pwdModal" @submit="handleModifyPwd" />
+  </div>
 </template>
 <script lang="ts">
   import { defineComponent, reactive, toRefs } from 'vue';
@@ -34,8 +38,7 @@
   import { dateUtil } from '/@/utils/dateUtil';
   import { useMessage } from '/@/hooks/web/useMessage';
   import ChangePwdModal from './ChangePwdModal.vue';
-  import { CandidateInfo } from '/#/store';
-  import { CandPwdModifyForm } from '/@/api/sys/model/userModel';
+  import { CandidateInfo, CandPwdModifyForm } from '/@/api/sys/model/userModel';
   import { updatePwd, updateCandidate } from '/@/api/sys/user';
   import { PageWrapper } from '/@/components/Page';
 

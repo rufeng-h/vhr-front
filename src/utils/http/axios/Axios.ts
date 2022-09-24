@@ -120,10 +120,13 @@ export class VAxios {
   /**
    * @description:  File Upload
    */
-  uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams) {
+  uploadFile<T = any>(
+    config: AxiosRequestConfig,
+    params: UploadFileParams,
+    options?: RequestOptions,
+  ) {
     const formData = new window.FormData();
     const customFilename = params.name || 'file';
-
     if (params.filename) {
       formData.append(customFilename, params.file, params.filename);
     } else {
@@ -144,16 +147,16 @@ export class VAxios {
       });
     }
 
-    return this.axiosInstance.request<T>({
-      ...config,
-      method: 'POST',
-      data: formData,
-      headers: {
-        'Content-type': ContentTypeEnum.FORM_DATA,
-        // @ts-ignore
-        ignoreCancelToken: true,
+    return this.post<T>(
+      {
+        ...config,
+        data: formData,
+        headers: {
+          'Content-type': ContentTypeEnum.FORM_DATA,
+        },
       },
-    });
+      options,
+    );
   }
 
   // support form-data

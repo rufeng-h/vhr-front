@@ -1,15 +1,17 @@
 <template>
-  <ScrollContainer>
-    <div ref="wrapperRef" :class="prefixCls">
-      <Tabs tab-position="left" :class="tabBarStyle">
-        <template v-for="item in settingList" :key="item.key">
-          <TabPane :tab="item.name">
-            <component :is="item.component" />
-          </TabPane>
-        </template>
-      </Tabs>
-    </div>
-  </ScrollContainer>
+  <div>
+    <ScrollContainer>
+      <div ref="wrapperRef" :class="prefixCls">
+        <Tabs tab-position="left" :class="tabBarStyle">
+          <template v-for="item in settingList" :key="item.key">
+            <TabPane :tab="item.name">
+              <component :is="item.component" />
+            </TabPane>
+          </template>
+        </Tabs>
+      </div>
+    </ScrollContainer>
+  </div>
 </template>
 
 <script lang="ts">

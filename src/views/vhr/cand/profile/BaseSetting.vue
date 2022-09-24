@@ -7,12 +7,11 @@
           <span class="text-lg ml-2">个人基本信息</span>
         </div>
       </template>
-      <a-row :gutter="24">
-        <a-col :span="4">
-          <div class="change-avatar">
-            <div class="mb-2">头像</div>
+      <div class="flex flex-row justify-between items-center">
+        <div class="my-2 2xl:mx-6">
+          <div>
             <CropperAvatar
-              :uploadApi="uploadApi"
+              :uploadApi="uploadCandAvatar"
               :value="avatar"
               btnText="更换头像"
               :btnProps="{ preIcon: 'ant-design:cloud-upload-outlined' }"
@@ -20,8 +19,16 @@
               width="150"
             />
           </div>
-        </a-col>
-        <a-col :span="18">
+          <div class="mt-2 flex flex-row items-center justify-around">
+            <div>
+              <Icon v-if="gender === 'M'" icon="twemoji:male-sign" :size="15" />
+              <Icon v-else icon="twemoji:female-sign" :size="20" />
+              <span class="ml-2">{{ gender === 'M' ? '男' : '女' }}</span>
+            </div>
+            <div>{{ birth }}</div>
+          </div>
+        </div>
+        <div>
           <BasicForm @register="register">
             <template #email="{ model, field }">
               <a-input-group compact>
@@ -36,11 +43,12 @@
               </a-input-group>
             </template>
           </BasicForm>
-          <div class="text-center">
-            <a-button type="primary">更新基本信息</a-button>
-          </div>
-        </a-col>
-      </a-row>
+        </div>
+      </div>
+      <div class="text-center">
+        <a-button type="primary" class="2xl:w-24 mx-2" @click="resetForm">重 置</a-button>
+        <a-button type="primary" class="2xl:w-24 mx-2" @click="handleUpdateInfo">更 新</a-button>
+      </div>
     </CollapseContainer>
     <CollapseContainer :canExpan="false" defaultShow>
       <template #title>
@@ -74,7 +82,7 @@
   </div>
 </template>
 <script lang="ts">
-  import { Row, Col, Card, Input } from 'ant-design-vue';
+  import { Card, Input } from 'ant-design-vue';
   import { computed, defineComponent, nextTick, onMounted, reactive, toRefs } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { CollapseContainer } from '/@/components/Container';
@@ -83,7 +91,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
 
   import headerImg from '/@/assets/images/header.jpg';
-  import { baseSetschemas } from './data';
+  import { baseSetschemas, cityMap, countryMap, provinceMap } from './data';
   import { useUserStore } from '/@/store/modules/user';
   import { uploadApi } from '/@/api/sys/upload';
   import Icon from '/@/components/Icon';
@@ -107,14 +115,14 @@
   import { InsertOrUpdateFamilyForm } from '/@/api/vhr/family/model/familyModel';
   import { useModal } from '/@/components/Modal';
   import ModifyEmailModal from '../ModifyEmailModal.vue';
-  import { createMessageContext } from '@intlify/runtime';
+  import { updateCandInfo, uploadCandAvatar } from '/@/api/vhr/cand/candidate';
+  import { deepMerge } from '/@/utils';
+  import { useLoading } from '/@/components/Loading';
 
   export default defineComponent({
     components: {
       BasicForm,
       CollapseContainer,
-      ARow: Row,
-      ACol: Col,
       BasicTable,
       Icon,
       TableAction,
@@ -127,22 +135,118 @@
     setup() {
       const { createMessage: msg } = useMessage();
       const userStore = useUserStore();
+      const [openFullLoading, closeFullLoading] = useLoading({
+        tip: '请稍后...',
+      });
+
+      const candInfo = userStore.getUserInfo as CandidateInfo;
+      const idCard = candInfo.idCard;
       const state: {
         currentEditKey: string;
         userInfo: CandidateInfo;
+        birth: string;
+        gender: 'M' | 'F';
       } = reactive({
         currentEditKey: '',
+        birth:
+          idCard.substring(6, 10) + '-' + idCard.substring(10, 12) + '-' + idCard.substring(12, 14),
         userInfo: userStore.getUserInfo as CandidateInfo,
+        gender: parseInt(idCard.substring(16)) % 2 === 0 ? 'F' : 'M',
       });
 
-      const [register, { setFieldsValue }] = useForm({
+      const [register, { setFieldsValue, validate: validateForm, updateSchema }] = useForm({
         labelWidth: 100,
         showActionButtonGroup: false,
         schemas: baseSetschemas,
       });
 
+      const handleUpdateInfo = async () => {
+        const values = await validateForm();
+        values.candId = state.userInfo.userId;
+        try {
+          openFullLoading();
+          if (await updateCandInfo(values)) {
+            msg.success('修改成功！');
+            deepMerge(state.userInfo, values);
+            setFormInitValue();
+          }
+        } finally {
+          closeFullLoading();
+        }
+      };
+
+      const resetForm = () => {
+        setFormInitValue();
+      };
+
+      function setFormInitValue() {
+        const values = cloneDeep(state.userInfo);
+        if (!!values.living) {
+          const code = values.living;
+          const p = provinceMap[code.substring(0, 2).padEnd(6, '0')];
+          const c = cityMap[code.substring(0, 4).padEnd(6, '0')];
+          updateSchema({
+            field: 'living1',
+            componentProps: {
+              options: p.children.map((it) => {
+                return {
+                  value: it.code,
+                  label: it.name,
+                };
+              }),
+            },
+          });
+          updateSchema({
+            field: 'living',
+            componentProps: {
+              options: c.children.map((it) => {
+                return {
+                  value: it.code,
+                  label: it.name,
+                };
+              }),
+            },
+          });
+          values['living0'] = p?.code;
+          values['living1'] = c?.code;
+          values['living'] = countryMap[code]?.code;
+        }
+        if (!!values.hometown) {
+          const code = values.hometown;
+          const p = provinceMap[code.substring(0, 2).padEnd(6, '0')];
+          const c = cityMap[code.substring(0, 4).padEnd(6, '0')];
+          updateSchema({
+            field: 'hometown1',
+            componentProps: {
+              options: p.children.map((it) => {
+                return {
+                  value: it.code,
+                  label: it.name,
+                };
+              }),
+            },
+          });
+          updateSchema({
+            field: 'hometown',
+            componentProps: {
+              options: c.children.map((it) => {
+                return {
+                  value: it.code,
+                  label: it.name,
+                };
+              }),
+            },
+          });
+          values['hometown0'] = p?.code;
+          values['hometown1'] = c?.code;
+          values['hometown'] = countryMap[code]?.code;
+        }
+
+        setFieldsValue(values);
+      }
+
       onMounted(async () => {
-        setFieldsValue(state.userInfo);
+        setFormInitValue();
       });
 
       const avatar = computed(() => {
@@ -150,10 +254,8 @@
         return avatar || headerImg;
       });
 
-      function updateAvatar(src: string) {
-        const userinfo = userStore.getUserInfo;
-        userinfo.avatar = src;
-        userStore.setUserInfo(userinfo);
+      function updateAvatar({ uri }) {
+        state.userInfo.avatar = uri;
       }
 
       function updateEmailSuccess(email) {
@@ -300,17 +402,14 @@
         openModal,
 
         updateEmailSuccess,
+
+        resetForm,
+        handleUpdateInfo,
+
+        uploadCandAvatar,
       };
     },
   });
 </script>
 
-<style lang="less" scoped>
-  .change-avatar {
-    img {
-      display: block;
-      margin-bottom: 15px;
-      border-radius: 50%;
-    }
-  }
-</style>
+<style lang="less" scoped></style>

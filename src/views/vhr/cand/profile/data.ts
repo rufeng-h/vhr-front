@@ -39,12 +39,16 @@ const provinceOptions = area.map((item) => {
   return { value: item.code, label: item.name };
 });
 
-const provinceMap = {};
-area.forEach((item) => (provinceMap[item.code] = item));
-
-const cityMap = {};
-area.forEach((item) => item.children.forEach((i) => (cityMap[i.code] = i)));
-
+export const provinceMap = {};
+export const cityMap = {};
+export const countryMap = {};
+area.forEach((item) => {
+  provinceMap[item.code] = item;
+  item.children.forEach((i) => {
+    cityMap[i.code] = i;
+    i.children.forEach((c) => (countryMap[c.code] = c));
+  });
+});
 const nationalities = [
   '汉族',
   '壮族',
@@ -111,6 +115,7 @@ const politics = [
   '无党派民主人士',
   '普通公民',
 ];
+
 const politicOpts: DemoOptionsItem[] = [];
 for (let i = 0; i < politics.length; i++) {
   politicOpts.push({ label: politics[i], value: i.toString() });
@@ -307,7 +312,7 @@ export const baseSetschemas: FormSchema[] = [
   },
   {
     required: true,
-    field: 'nationality',
+    field: 'nation',
     component: 'Select',
     label: '民 族',
     componentProps: {
@@ -319,7 +324,7 @@ export const baseSetschemas: FormSchema[] = [
   },
   {
     required: true,
-    field: 'policy',
+    field: 'politic',
     component: 'Select',
     label: '政治面貌',
     componentProps: {
@@ -350,6 +355,31 @@ export const baseSetschemas: FormSchema[] = [
     componentProps: {
       min: 0,
       max: 250,
+    },
+    colProps: {
+      span: 11,
+    },
+  },
+  {
+    field: 'visionLeft',
+    component: 'InputNumber',
+    label: '左眼视力',
+    helpMessage: '标准对数记录',
+    componentProps: {
+      min: 4.0,
+      max: 5.5,
+    },
+    colProps: {
+      span: 11,
+    },
+  },
+  {
+    field: 'visionRight',
+    component: 'InputNumber',
+    label: '右眼视力',
+    componentProps: {
+      min: 4.0,
+      max: 5.5,
     },
     colProps: {
       span: 11,

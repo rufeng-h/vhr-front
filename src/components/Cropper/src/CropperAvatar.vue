@@ -22,7 +22,7 @@
 
     <CopperModal
       @register="register"
-      @upload-success="handleUploadSuccess"
+      @uploadSuccess="handleUploadSuccess"
       :uploadApi="uploadApi"
       :src="sourceValue"
     />
@@ -53,7 +53,9 @@
     showBtn: { type: Boolean, default: true },
     btnProps: { type: Object as PropType<ButtonProps> },
     btnText: { type: String, default: '' },
-    uploadApi: { type: Function as PropType<({ file: Blob, name: string }) => Promise<void>> },
+    uploadApi: {
+      type: Function as PropType<({ file: Blob, name: string, filename }) => Promise<string>>,
+    },
   };
 
   export default defineComponent({
@@ -91,9 +93,9 @@
         },
       );
 
-      function handleUploadSuccess({ source }) {
-        sourceValue.value = source;
-        emit('change', source);
+      function handleUploadSuccess({ source, uri }) {
+        sourceValue.value = uri;
+        emit('change', { source, uri });
         createMessage.success(t('component.cropper.uploadSuccess'));
       }
 
