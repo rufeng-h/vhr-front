@@ -78,7 +78,7 @@ const transform: AxiosTransform = {
     // errorMessageMode='none' 一般是调用时明确表示不希望自动弹出错误提示
     if (options.errorMessageMode === 'modal') {
       createErrorModal({ title: t('sys.api.errorTip'), content: timeoutMsg });
-    } else if (options.errorMessageMode === 'message') {
+    } else if (options.errorMessageMode !== 'none') {
       createMessage.error(timeoutMsg);
     }
 

@@ -91,7 +91,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
 
   import headerImg from '/@/assets/images/header.jpg';
-  import { baseSetschemas, cityMap, countryMap, provinceMap } from './data';
+  import { baseSetschemas } from './data';
   import { useUserStore } from '/@/store/modules/user';
   import { uploadApi } from '/@/api/sys/upload';
   import Icon from '/@/components/Icon';
@@ -118,6 +118,7 @@
   import { updateCandInfo, uploadCandAvatar } from '/@/api/vhr/cand/candidate';
   import { deepMerge } from '/@/utils';
   import { useLoading } from '/@/components/Loading';
+  import { cityMap, countryMap, provinceMap } from '/@/const';
 
   export default defineComponent({
     components: {

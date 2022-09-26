@@ -41,5 +41,33 @@ const candRoutes: AppRouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/resume',
+    redirect: '/resume/cand',
+    name: 'Resume',
+    component: LAYOUT,
+    meta: {
+      title: '我的简历',
+      hideChildrenInMenu: true,
+    },
+    children: [
+      {
+        path: 'cand',
+        name: 'CandResume',
+        component: () => import('/@/views/vhr/cand/resume/index.vue'),
+        meta: {
+          title: '简历中心',
+        },
+      },
+      {
+        path: ':rsId',
+        name: 'ResumeDetail',
+        component: () => import('/@/views/vhr/cand/resume/Resume.vue'),
+        meta: {
+          title: '简历详情',
+        },
+      },
+    ],
+  },
 ];
 export default candRoutes;

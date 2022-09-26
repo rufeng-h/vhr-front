@@ -21,7 +21,9 @@ export interface CandidateInfo extends UserInfo {
   hometown?: string;
   gender: string;
   idCard: string;
-  living: string;
+  living?: string;
+  nation?: string;
+  politic?: string;
 }
 
 export enum LoginType {
