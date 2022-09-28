@@ -1,5 +1,5 @@
 <template>
-  <a-card title="教育经历" :bordered="false" id="education">
+  <a-card title="个人优势" :bordered="false" id="education">
     <template #extra>
       <a-button
         type="primary"

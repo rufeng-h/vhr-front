@@ -11180,3 +11180,49 @@ for (let i = 0; i < universities.length; i++) {
   universityMap[i.toString()] = universities[i];
   uniOptions.push({ value: i.toString(), label: universities[i] });
 }
+
+export const companySizeArr = [
+  '少于50人',
+  '50-150人',
+  '150-500人',
+  '500-1000人',
+  '1000-5000人',
+  '5000-10000人',
+  '10000人以上',
+];
+export const companySizeOpts: DemoOptionsItem[] = [];
+for (let i = 0; i < companySizeArr.length; i++) {
+  companySizeOpts.push({
+    label: companySizeArr[i],
+    value: i.toString(),
+  });
+}
+const companyTypeArr = [
+  '外资（欧美）',
+  '外资（非欧美）',
+  '合资',
+  '国企',
+  '民营公司',
+  '上市公司',
+  '创业公司',
+  '外企代表处',
+  '政府机关',
+  '事业单位',
+  '营利组织',
+];
+
+export const companyTypeOpts: DemoOptionsItem[] = [];
+for (let i = 0; i < companyTypeArr.length; i++) {
+  companyTypeOpts.push({
+    label: companyTypeArr[i],
+    value: i.toString(),
+  });
+}
+
+export const workTypeArr = ['全职', '兼职', '实习'];
+
+export const workTypeOpts = [
+  { label: '全职', value: '0' },
+  { label: '兼职', value: '1' },
+  { label: '实习', value: '2' },
+];

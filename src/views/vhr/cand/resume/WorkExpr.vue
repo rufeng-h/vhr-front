@@ -1,5 +1,5 @@
 <template>
-  <a-card title="教育经历" :bordered="false" id="education">
+  <a-card title="工作经历" :bordered="false" id="work-expr">
     <template #extra>
       <a-button
         type="primary"
@@ -11,12 +11,12 @@
     </template>
     <!-- 学历展示 -->
     <div
-      v-for="edu in edus"
-      :key="edu.eduId"
+      v-for="work in workExprs"
+      :key="work.workId"
       class="edu-info border-b-blue-200 border-solid border-b-1"
     >
       <div
-        v-show="currentEditEduId !== edu.eduId"
+        v-show="currentEditWorkId !== work.workId"
         class="flex flex-row justify-between items-start"
       >
         <div class="flex flex-col justify-start items-start">
@@ -25,38 +25,37 @@
               <a-image src="resource/img/logo.png" height="4rem" />
               <div class="h-16 ml-3 flex flex-col justify-around items-start">
                 <div
-                  ><span class="text-base mr-2">{{ universities[parseInt(edu.eduSchool)] }}</span
-                  ><span mr-2><a-tag color="green">留学经历</a-tag></span
-                  ><span><a-tag color="orange">211</a-tag></span></div
-                >
+                  ><span class="text-base mr-2">{{ work.workComp }}</span>
+                  <span mr-2><a-tag color="green">海外经历</a-tag></span>
+                </div>
                 <div>
                   <span
-                    >{{ eduLevels[parseInt(edu.eduEducation)] }}
+                    >{{ work.workPosition }}
                     <span class="text-gray-300"> | </span>
                   </span>
-                  <span>{{ major3Map[edu.eduMajor].name }}</span>
+                  <span>{{ major3Map[work.workInd].name }}</span>
                 </div>
               </div>
             </div>
           </div>
           <!-- 专业描述 -->
-          <div class="mt-2" v-if="!!edu.eduMajorDesc">
-            <span class="text-gray-300">专业描述：</span><span> {{ edu.eduMajorDesc }}</span>
+          <div class="mt-2">
+            <span class="text-gray-300">职位描述：</span><span> {{ work.workDesc }}</span>
           </div>
         </div>
 
         <!-- 右侧时间和操作 -->
         <div class="flex flex-row justify-end items-center">
           <div class="mr-6">
-            <span>{{ edu.eduStartDate.substring(0, 7) }}</span>
+            <span>{{ work.workStart.substring(0, 7) }}</span>
             <span> 至 </span>
-            <span>{{ edu.eduEndDate?.substring(0, 7) }}</span>
+            <span>{{ work.workEnd?.substring(0, 7) }}</span>
           </div>
           <div class="text-sm">
             <a-button
               type="warning"
               class="mr-1"
-              @click="handleEdit(edu.eduId)"
+              @click="handleEdit(work.workId)"
               size="small"
               :disabled="showForm"
               >编辑</a-button
@@ -64,7 +63,7 @@
             <a-button
               type="error"
               class="ml-1"
-              @click="handleDel(edu.eduId)"
+              @click="handleDel(work.workId)"
               size="small"
               :disabled="showForm"
               >删除</a-button
@@ -73,8 +72,8 @@
         </div>
       </div>
     </div>
-    <div v-if="edus.length === 0 && !showForm" class="text-center text-gray-400">
-      请完善教育经历</div
+    <div v-if="workExprs.length === 0 && !showForm" class="text-center text-gray-400">
+      请完善工作经历</div
     >
     <div class="mt-4 py-2 border-solid border-1 border-blue-300" v-show="showForm">
       <BasicForm @register="regForm" />
@@ -91,44 +90,44 @@
   import { defineComponent, reactive, toRefs } from 'vue';
   import { useRoute } from 'vue-router';
   import { DemoOptionsItem } from '/@/api/demo/model/optionsModel';
-  import { EducationModel } from '/@/api/vhr/edu/model';
   import { BasicForm, FormSchema, useForm } from '/@/components/Form';
   import { useMessage } from '/@/hooks/web/useMessage';
   import {
     majors,
     major1Map,
     major2Map,
-    eduOptions,
-    uniOptions,
     universities,
     eduLevels,
     findMajorByCode,
     major3Map,
+    workTypeOpts,
+    companySizeOpts,
+    companyTypeOpts,
   } from '/@/const';
-  import { addEducation, updateEducation, delEducation } from '/@/api/vhr/edu/education';
-  import { InsertOrUpdateEduForm } from '/@/api/vhr/edu/model';
   import { formatToDate } from '/@/utils/dateUtil';
   import { cloneDeep } from 'lodash';
+  import { InsertOrUpdateWorkForm, WorkExprModel } from '/@/api/vhr/work/model';
+  import { addWorkExpr, delWorkExpr, updateWorkExpr } from '/@/api/vhr/work/work';
 
   export default defineComponent({
-    name: 'Education',
+    name: 'WorkExpr',
     components: { BasicForm, [Card.name]: Card, [Tag.name]: Tag, [Image.name]: Image },
     props: {
-      edus: {
-        type: Array as PropType<EducationModel[]>,
+      workExprs: {
+        type: Array as PropType<WorkExprModel[]>,
         default: () => [],
       },
     },
-    emits: ['update:edus'],
+    emits: ['update:workExprs'],
     setup(props, { emit }) {
       const route = useRoute();
       const { createMessage: msg, createConfirm } = useMessage();
       const state: {
         showForm: boolean;
-        currentEditEduId: number;
+        currentEditWorkId: number;
       } = reactive({
         showForm: false,
-        currentEditEduId: -1,
+        currentEditWorkId: -1,
       });
 
       const major1Options: DemoOptionsItem[] = majors.map((item) => {
@@ -140,54 +139,27 @@
 
       const formSchema: FormSchema[] = [
         {
-          field: 'eduEducation',
-          label: '最高学历',
-          component: 'Select',
+          field: 'workComp',
+          label: '公司',
+          component: 'Input',
           required: true,
           colProps: {
-            span: 13,
-          },
-          componentProps: {
-            options: eduOptions,
+            span: 24,
           },
         },
         {
-          field: 'eduFullTime',
-          label: '全日制',
-          defaultValue: true,
-          component: 'Checkbox',
+          field: 'workPosition',
+          label: '职位',
+          component: 'Input',
           required: true,
-          helpMessage: '什么是全日制?',
           colProps: {
-            span: 8,
-          },
-          show({ model }) {
-            return model.eduEducation && model.eduEducation > '2';
+            span: 11,
           },
         },
         {
           required: true,
-          field: 'eduSchool',
-          label: '学 校',
-          component: 'Select',
-          colProps: {
-            span: 13,
-          },
-          componentProps: {
-            options: uniOptions,
-            showSearch: true,
-            filterOption(input, opt) {
-              return opt.label.indexOf(input) !== -1;
-            },
-          },
-          ifShow({ model }) {
-            return model.eduEducation && model.eduEducation > '3';
-          },
-        },
-        {
-          required: true,
-          field: 'eduDate',
-          label: '起止日期',
+          field: 'workDate',
+          label: '时间',
           component: 'RangePicker',
           componentProps: {
             format: 'YYYY-MM-DD',
@@ -195,23 +167,49 @@
             showTime: false,
           },
           colProps: {
-            span: 24,
+            span: 9,
           },
-          ifShow({ model }) {
-            return model.eduEducation && model.eduEducation > '1';
+        },
+
+        {
+          required: true,
+
+          field: 'workCompType',
+          label: '公司性质',
+          component: 'Select',
+          componentProps: {
+            options: companyTypeOpts,
+          },
+          labelWidth: 0,
+          colProps: {
+            span: 11,
           },
         },
         {
-          field: 'm1',
-          label: '所学专业',
+          required: true,
+
+          field: 'workCompSize',
+          label: '公司规模',
+          component: 'Select',
+          componentProps: {
+            options: companySizeOpts,
+          },
+          labelWidth: 0,
+          colProps: {
+            span: 9,
+          },
+        },
+
+        {
+          required: true,
+          field: 'ind1',
+          label: '行业',
           component: 'Select',
           colProps: {
             span: 8,
           },
           componentProps: ({ formModel, formActionType }) => {
             return {
-              placeholder: '高中及以下学历选填',
-
               options: major1Options,
               onChange(e) {
                 const { updateSchema, setFieldsValue } = formActionType;
@@ -221,12 +219,12 @@
                     value: item.code,
                   };
                 });
-                setFieldsValue({ eduMajor: undefined, m2: undefined });
+                setFieldsValue({ ind2: undefined, workInd: undefined });
                 /**
                  * 二级props
                  */
                 updateSchema({
-                  field: 'm2',
+                  field: 'ind2',
                   componentProps: {
                     options,
                     onChange(e) {
@@ -236,10 +234,10 @@
                           value: item.code,
                         };
                       });
-                      formModel.eduMajor = undefined;
+                      formModel.workInd = undefined;
                       const { updateSchema } = formActionType;
                       updateSchema({
-                        field: 'eduMajor',
+                        field: 'workInd',
                         componentProps: {
                           options,
                         },
@@ -251,7 +249,7 @@
                  * 三级options置空
                  */
                 updateSchema({
-                  field: 'eduMajor',
+                  field: 'workInd',
                   componentProps: {
                     options: [],
                   },
@@ -259,12 +257,10 @@
               },
             };
           },
-          ifShow({ model }) {
-            return model.eduEducation && model.eduEducation > '1';
-          },
         },
         {
-          field: 'm2',
+          required: true,
+          field: 'ind2',
           label: '',
           component: 'Select',
           componentProps: {},
@@ -272,12 +268,11 @@
           colProps: {
             span: 6,
           },
-          ifShow({ model }) {
-            return model.eduEducation && model.eduEducation > '1';
-          },
         },
         {
-          field: 'eduMajor',
+          required: true,
+
+          field: 'workInd',
           label: '',
           component: 'Select',
           componentProps: {},
@@ -285,19 +280,18 @@
           colProps: {
             span: 6,
           },
-          ifShow({ model }) {
-            return model.eduEducation && model.eduEducation > '1';
-          },
         },
+
         {
-          field: 'eduMajorDesc',
-          label: '专业描述',
+          required: true,
+          field: 'workDesc',
+          label: '工作描述',
           component: 'InputTextArea',
           colProps: {
             span: 24,
           },
           componentProps: {
-            placeholder: '描述在校期间所学的专业，主要包括课程内容、毕业设计等',
+            placeholder: '描述你的工作范围、承担职责及取得的成绩等',
             showCount: true,
             allowClear: true,
             autoSize: {
@@ -305,19 +299,28 @@
               maxRows: 8,
             },
           },
-          ifShow({ model }) {
-            return model.eduEducation && model.eduEducation > '1';
+        },
+        {
+          required: true,
+          field: 'workType',
+          label: '工作性质',
+          component: 'RadioButtonGroup',
+          componentProps: {
+            options: workTypeOpts,
+          },
+          colProps: {
+            span: 9,
           },
         },
       ];
       function handleEditCancel() {
         state.showForm = false;
-        state.currentEditEduId = -1;
+        state.currentEditWorkId = -1;
       }
 
-      function findEduIdxByEduId(eduId: number): number {
-        for (let i = 0; i < props.edus.length; i++) {
-          if (eduId === props.edus[i].eduId) {
+      function findWorkIdxByWorkId(eduId: number): number {
+        for (let i = 0; i < props.workExprs.length; i++) {
+          if (eduId === props.workExprs[i].workId) {
             return i;
           }
         }
@@ -329,11 +332,11 @@
           iconType: 'warning',
           title: '确认删除该记录吗？',
           onOk: async () => {
-            if (await delEducation(id)) {
-              const i = findEduIdxByEduId(id);
-              let edus = cloneDeep(props.edus);
-              edus.splice(i, 1);
-              emit('update:edus', edus);
+            if (await delWorkExpr(id)) {
+              const i = findWorkIdxByWorkId(id);
+              let workExprs = cloneDeep(props.workExprs);
+              workExprs.splice(i, 1);
+              emit('update:workExprs', workExprs);
               msg.success('删除成功!');
             }
           },
@@ -342,21 +345,21 @@
 
       async function handleSubmit() {
         const values = await validate();
-        let edu = Object.assign({}, values);
-        edu.eduStartDate = formatToDate(edu.eduDate[0]);
-        edu.eduEndDate = formatToDate(edu.eduDate[1]);
-        let edus = cloneDeep(props.edus);
-        if (state.currentEditEduId !== -1) {
-          edu.eduId = state.currentEditEduId;
-          await updateEducation(edu as InsertOrUpdateEduForm);
-          edus.splice(findEduIdxByEduId(state.currentEditEduId), 1, edu);
-          state.currentEditEduId = -1;
+        let workExpr = Object.assign({}, values);
+        workExpr.workStart = formatToDate(workExpr.workDate[0]);
+        workExpr.workEnd = formatToDate(workExpr.workDate[1]);
+        let workExprs = cloneDeep(props.workExprs);
+        if (state.currentEditWorkId !== -1) {
+          workExpr.workId = state.currentEditWorkId;
+          await updateWorkExpr(workExpr as InsertOrUpdateWorkForm);
+          workExprs.splice(findWorkIdxByWorkId(state.currentEditWorkId), 1, workExpr);
+          state.currentEditWorkId = -1;
         } else {
-          edu.eduRsId = route.params.rsId;
-          edu = await addEducation(edu as InsertOrUpdateEduForm);
-          edus.push(edu);
+          workExpr.workRsId = route.params.rsId;
+          workExpr = await addWorkExpr(workExpr as InsertOrUpdateWorkForm);
+          workExprs.push(workExpr);
         }
-        emit('update:edus', edus);
+        emit('update:workExprs', workExprs);
         msg.success('操作成功!');
         state.showForm = false;
       }
@@ -369,13 +372,13 @@
       function handleAdd() {
         resetFields();
         updateSchema({
-          field: 'm2',
+          field: 'ind2',
           componentProps: {
             options: [],
           },
         });
         updateSchema({
-          field: 'eduMajor',
+          field: 'workInd',
           componentProps: {
             options: [],
           },
@@ -384,12 +387,12 @@
       }
 
       function handleEdit(id) {
-        const i = findEduIdxByEduId(id);
-        const values = Object.assign({}, props.edus[i]);
-        values['eduDate'] = [props.edus[i].eduStartDate, props.edus[i].eduEndDate];
-        const ms = findMajorByCode(props.edus[i].eduMajor);
+        const i = findWorkIdxByWorkId(id);
+        const values = Object.assign({}, props.workExprs[i]);
+        values['workDate'] = [props.workExprs[i].workStart, props.workExprs[i].workEnd];
+        const ms = findMajorByCode(props.workExprs[i].workInd);
         updateSchema({
-          field: 'm2',
+          field: 'ind2',
           componentProps: {
             options: ms[0].children?.map((it) => {
               return {
@@ -400,7 +403,7 @@
           },
         });
         updateSchema({
-          field: 'eduMajor',
+          field: 'workInd',
           componentProps: {
             options: ms[1].children?.map((it) => {
               return {
@@ -410,12 +413,12 @@
             }),
           },
         });
-        values['m1'] = ms[0].code;
-        values['m2'] = ms[1].code;
-        values['eduMajor'] = ms[2].code;
+        values['ind1'] = ms[0].code;
+        values['ind2'] = ms[1].code;
+        values['workInd'] = ms[2].code;
         setFieldsValue(values);
         state.showForm = true;
-        state.currentEditEduId = id;
+        state.currentEditWorkId = id;
       }
 
       return {
@@ -462,5 +465,17 @@
 
   .edu-info:nth-child(1) {
     padding-top: 0;
+  }
+
+  :deep(.ant-picker-range) {
+    width: 100% !important;
+  }
+
+  :deep(.ant-input-affix-wrapper) {
+    max-width: 395px;
+  }
+
+  :deep(.ant-input-affix-wrapper-textarea-with-clear-btn) {
+    max-width: none !important;
   }
 </style>

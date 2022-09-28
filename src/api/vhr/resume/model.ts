@@ -1,5 +1,6 @@
 import { AdvantageModel } from '../adv/model';
 import { EducationModel } from '../edu/model';
+import { WorkExprModel } from '../work/model';
 
 export interface ResumeModel {
   rsId: number;
@@ -15,4 +16,5 @@ export interface ResumeModel {
 export interface ResumeInfo extends ResumeModel {
   adv?: AdvantageModel;
   edus: EducationModel[];
+  workExprs: WorkExprModel[];
 }

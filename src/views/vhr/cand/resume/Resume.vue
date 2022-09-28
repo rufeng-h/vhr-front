@@ -88,6 +88,7 @@
           <!-- 个人优势 -->
           <Advantage v-model:adv="resumeInfo.adv" />
           <Education v-model:edus="resumeInfo.edus" />
+          <WorkExpr v-model:workExprs="resumeInfo.workExprs" />
         </div>
       </div>
     </PageWrapper>
@@ -106,6 +107,7 @@
   import { cityMap, countryMap, nationalities, politics } from '/@/const';
   import Advantage from './Advantage.vue';
   import Education from './Education.vue';
+  import WorkExpr from './WorkExpr.vue';
 
   export default defineComponent({
     name: 'ResumePage',
@@ -121,6 +123,7 @@
       [Anchor.Link.name]: Anchor.Link,
       Advantage,
       Education,
+      WorkExpr,
     },
     setup() {
       const router = useRoute();
@@ -140,6 +143,7 @@
           rsModified: '',
           rsPublic: false,
           edus: [],
+          workExprs: [],
         },
       });
       const tableRef = ref<{ getDataSource: () => any } | null>(null);
@@ -176,7 +180,7 @@
       function handleAnchorClick(e) {
         e.preventDefault();
       }
-      setInterval(() => console.log(state.resumeInfo.edus), 2000);
+      // setInterval(() => console.log(state.resumeInfo.edus), 2000);
 
       return {
         ...toRefs(state),
